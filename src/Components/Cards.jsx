@@ -3,6 +3,23 @@ import { motion, useDragControls } from "framer-motion"
 import {MdDeleteForever } from "react-icons/md";
 const Cards = (props) => {
   const controls = useDragControls()
+
+  const deleteTask = (id) => {
+    alert("Please select task with ID: " + id);
+
+    // Get existing tasks from local storage
+    let existingTasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    // Filter out the task with the given id
+    const updatedTasks = existingTasks.filter(task => task.id !== id);
+    
+    // Save the updated tasks array back to local storage
+    localStorage.setItem("tasks", JSON.stringify(updatedTasks));
+
+    // Optional: Update state if you're using state management to re-render the component
+    // setTasks(updatedTasks); // Uncomment this line if using state
+};
+
   return (
     <motion.div 
     drag 
@@ -19,7 +36,7 @@ const Cards = (props) => {
            Date:{props.date}
           </span>
 
-           <span className='text-xl text-red-400 hover:text-red-600 hover:scale-105'>
+           <span onClick={()=>deleteTask(props.id)} className='text-xl text-red-400 hover:text-red-600 hover:scale-105'>
            <MdDeleteForever />
            </span>
        </div>

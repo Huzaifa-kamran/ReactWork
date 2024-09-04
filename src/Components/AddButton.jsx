@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { MdAddCircleOutline } from "react-icons/md";
 
-const AddButton = () => {
+const AddButton = (props) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [taskName, setTaskName] = useState('');
 
@@ -35,6 +35,7 @@ const AddButton = () => {
     // Clear the task input and close the modal
     setTaskName('');
     toggleModal();
+    props.check(taskName)
   };
  
   return (
