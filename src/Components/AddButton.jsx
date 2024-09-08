@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { MdAddCircleOutline } from "react-icons/md";
 
 const AddButton = (props) => {
@@ -10,34 +10,48 @@ const AddButton = (props) => {
   };
 
   const AddTask = () => {
-    // Get the current date
-    const currentDate = new Date().toLocaleString();
+    if (taskName.trim() === '') {
+      alert("Task name cannot be empty!");
+      return;
+    }
 
-    // Get existing tasks from local storage
+    const currentDate = new Date().toLocaleString();
     const existingTasks = JSON.parse(localStorage.getItem("tasks")) || [];
 
-    // Create the task object
     const newTask = {
-      id: Date.now(), // Unique identifier
-      task: taskName, // Use the taskName from state
+      id: Date.now(),
+      task: taskName,
       date: currentDate,
-      status: false
+      status: false,
     };
 
-    // Add the new task to the existing tasks
     existingTasks.push(newTask);
-
-    // Save the updated tasks array back to local storage
     localStorage.setItem("tasks", JSON.stringify(existingTasks));
 
     console.log("Task added:", newTask);
 
-    // Clear the task input and close the modal
     setTaskName('');
     toggleModal();
-    props.check(taskName)
+    props.check(taskName);
   };
- 
+
+  // Close modal on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (event.target.classList.contains("modal-bg")) {
+        toggleModal();
+      }
+    };
+    
+    if (isModalOpen) {
+      document.addEventListener("mousedown", handleClickOutside);
+    } else {
+      document.removeEventListener("mousedown", handleClickOutside);
+    }
+
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, [isModalOpen]);
+
   return (
     <>
       {/* Add Button */}
@@ -49,7 +63,7 @@ const AddButton = (props) => {
 
       {/* Modal */}
       {isModalOpen && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50">
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 modal-bg">
           <div className="bg-zinc-800 text-white p-6 rounded-lg shadow-lg w-[90%] max-w-lg">
             <h2 className="text-xl font-bold mb-4">Add New Task</h2>
 
@@ -61,8 +75,10 @@ const AddButton = (props) => {
                 onChange={(e) => setTaskName(e.target.value)}
                 className="shadow border rounded w-full py-2 px-3 bg-zinc-700 text-white leading-tight focus:outline-none focus:shadow-outline"
                 placeholder="Enter your task"
+                autoFocus // Autofocus on modal open
               />
             </div>
+
             <div className="flex items-center justify-between">
               <button
                 type="button"
@@ -72,7 +88,7 @@ const AddButton = (props) => {
                 Cancel
               </button>
               <button
-                type='button'
+                type="button"
                 className="bg-zinc-500 hover:bg-zinc-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline"
                 onClick={AddTask}
               >

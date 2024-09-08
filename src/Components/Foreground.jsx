@@ -13,7 +13,7 @@ const Foreground = () => {
     <div ref={ref} className='fixed z-[3] top-0 left-0 w-full h-screen flex flex-wrap gap-3 p-3'>
       {
         existingTasks.map((temp,index)=>{
-         return <Cards id={temp.id} title={temp.task}  date={temp.date} status={temp.status} reference={ref}/>
+         return <Cards key={index} check={setCheck} id={temp.id} title={temp.task}  date={temp.date} status={temp.status} reference={ref}/>
         })
       }
     </div>
